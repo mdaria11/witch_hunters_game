@@ -1,0 +1,68 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Player_Behavior : MonoBehaviour
+{
+    [SerializeField] public GameObject agnes;
+    public GameObject player_mesh;
+    public Slider life_slider;
+
+    Animator player_animator;
+
+    public int life;
+    RaycastHit hit;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        life = 100;
+        life_slider.value = life;
+        player_animator = GetComponent<Player_Movement>().player_animator;
+        player_mesh = GetComponent<Player_Movement>().player_mesh;
+    }
+
+    public void close_range_attack()
+    {
+        player_animator.SetTrigger("attacking");
+
+        float distance = Vector3.Distance(player_mesh.transform.position, agnes.transform.position); //distance between player and agnes
+        float angle = Vector3.Angle(player_mesh.transform.forward, agnes.transform.position - player_mesh.transform.position); //offset between the player and agnes angle-wise
+
+        // attack if close enough and facing Agnes
+        if (distance <= 1.6f && angle <= 40f) // we hit Agnes
+        {
+            agnes.GetComponent<Agnes_Behavior>().life -= 5;
+            agnes.GetComponent<Agnes_Behavior>().life_slider.value = agnes.GetComponent<Agnes_Behavior>().life;
+        }
+    }
+
+    public void long_range_attack()
+    {
+        player_animator.SetTrigger("shooting");
+
+        if (Physics.Raycast(new Vector3(player_mesh.transform.position.x, player_mesh.transform.position.y + 1.5f, player_mesh.transform.position.z), player_mesh.transform.forward, out hit, 100f))
+        {
+            if(hit.transform.name == "Agnes")
+            {
+                agnes.GetComponent<Agnes_Behavior>().life -= 5;
+                agnes.GetComponent<Agnes_Behavior>().life_slider.value = agnes.GetComponent<Agnes_Behavior>().life;
+            }
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            close_range_attack();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            long_range_attack();
+        }
+    }
+}

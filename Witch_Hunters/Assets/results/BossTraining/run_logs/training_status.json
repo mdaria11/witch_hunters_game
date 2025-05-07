@@ -1,0 +1,65 @@
+{
+    "BossAgent": {
+        "checkpoints": [
+            {
+                "steps": 299947,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-299947.onnx",
+                "reward": -2.6785714823220457,
+                "creation_time": 1746206597.7655165,
+                "auxillary_file_paths": [
+                    "results\\BossTraining\\BossAgent\\BossAgent-299947.pt"
+                ]
+            },
+            {
+                "steps": 349994,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-349994.onnx",
+                "reward": -3.1000000635782876,
+                "creation_time": 1746206780.0141888,
+                "auxillary_file_paths": [
+                    "results\\BossTraining\\BossAgent\\BossAgent-349994.pt"
+                ]
+            },
+            {
+                "steps": 399976,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-399976.onnx",
+                "reward": -3.2153846959655104,
+                "creation_time": 1746206954.7049358,
+                "auxillary_file_paths": [
+                    "results\\BossTraining\\BossAgent\\BossAgent-399976.pt"
+                ]
+            },
+            {
+                "steps": 449955,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-449955.onnx",
+                "reward": -3.620000088214874,
+                "creation_time": 1746207136.3692155,
+                "auxillary_file_paths": [
+                    "results\\BossTraining\\BossAgent\\BossAgent-449955.pt"
+                ]
+            },
+            {
+                "steps": 455728,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-455728.onnx",
+                "reward": -3.622222315106127,
+                "creation_time": 1746207155.6688285,
+                "auxillary_file_paths": [
+                    "results\\BossTraining\\BossAgent\\BossAgent-455728.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 455728,
+            "file_path": "results\\BossTraining\\BossAgent.onnx",
+            "reward": -3.622222315106127,
+            "creation_time": 1746207155.6688285,
+            "auxillary_file_paths": [
+                "results\\BossTraining\\BossAgent\\BossAgent-455728.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.7.0+cpu"
+    }
+}
