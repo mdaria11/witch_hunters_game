@@ -14,6 +14,8 @@ public class Player_Behavior : MonoBehaviour
     public int life;
     RaycastHit hit;
 
+    Agnes_AI agnes_ai;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,6 +23,7 @@ public class Player_Behavior : MonoBehaviour
         life_slider.value = life;
         player_animator = GetComponent<Player_Movement>().player_animator;
         player_mesh = GetComponent<Player_Movement>().player_mesh;
+        agnes_ai = agnes.GetComponent<Agnes_AI>();
     }
 
     public void close_range_attack()
@@ -36,6 +39,9 @@ public class Player_Behavior : MonoBehaviour
             agnes.GetComponent<Agnes_Behavior>().life -= 5;
             agnes.GetComponent<Agnes_Behavior>().life_slider.value = agnes.GetComponent<Agnes_Behavior>().life;
         }
+
+        //update Agnes AI count variable
+        agnes_ai.count_close_attacks++;
     }
 
     public void long_range_attack()
@@ -50,6 +56,9 @@ public class Player_Behavior : MonoBehaviour
                 agnes.GetComponent<Agnes_Behavior>().life_slider.value = agnes.GetComponent<Agnes_Behavior>().life;
             }
         }
+
+        //update Agnes AI count variable
+        agnes_ai.count_long_attacks++;
     }
 
     // Update is called once per frame

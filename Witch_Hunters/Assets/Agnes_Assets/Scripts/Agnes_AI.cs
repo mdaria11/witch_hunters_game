@@ -3,6 +3,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using Unity.VisualScripting.Antlr3.Runtime;
 
 public class Agnes_AI : Agent
 {
@@ -16,12 +17,21 @@ public class Agnes_AI : Agent
     public bool busy_attacking;
     public bool walking_to_player;
 
-    //int last_player_life;
-    //int last_boss_life;
-    //int current_player_life;
-    //int current_boss_life;
+    public int count_close_attacks;
+    public int count_long_attacks;
+
+    bool close_strategy_chosen;
+    bool long_strategy_chosen;
+
+    int last_player_life;
+    int last_boss_life;
+    int current_player_life;
+    int current_boss_life;
 
     bool start_agent;
+
+    int how_many_times_teleporting;
+    int idle_actions_taken;
 
     public override void Initialize() // save the start position so we can initialize the position from the beginning for each episode
     {
@@ -34,23 +44,37 @@ public class Agnes_AI : Agent
         walking_to_player = false;
 
         start_agent = false;
+
+        count_close_attacks = 0;
+        count_long_attacks = 0;
+        close_strategy_chosen = false;
+        long_strategy_chosen = false;
+
+        how_many_times_teleporting = 0;
+        idle_actions_taken = 0;
     }
 
     public override void OnEpisodeBegin() // Agnes back in place and the life is full for both Agnes and the player
     {
         player.transform.position = player_startPosition;
         transform.position = startPosition;
+        GetComponent<Animator>().SetInteger("state", 0);
         boss_behaviors.life = 100;
         player.GetComponentInParent<Player_Behavior>().life = 100;
         boss_behaviors.life_slider.value = 100;
         player.GetComponentInParent<Player_Behavior>().life_slider.value = 100;
 
-        //last_player_life = 100;
-        //last_boss_life = 100;
+        last_player_life = 100;
+        last_boss_life = 100;
 
         busy_teleporting = false;
         busy_attacking = false;
         walking_to_player = false;
+
+        count_close_attacks = 0;
+        count_long_attacks = 0;
+        close_strategy_chosen = false;
+        long_strategy_chosen = false;
 
         //for ingame
         start_agent = false;
@@ -58,6 +82,9 @@ public class Agnes_AI : Agent
 
         //for training
         //start_agent = true;
+
+        how_many_times_teleporting = 0;
+        idle_actions_taken = 0;
     }
 
     IEnumerator Delay_start()
@@ -66,16 +93,39 @@ public class Agnes_AI : Agent
         start_agent = true;
     }
 
+    public void HandleEpisodeEnd()
+    {
+        if (boss_behaviors.life <= 0)
+        {
+            AddReward(-1f);
+            EndEpisode();
+        }
+        else if (player.GetComponentInParent<Player_Behavior>().life <= 0)
+        {
+            AddReward(1f);
+
+            if(boss_behaviors.life >= 50) //boss defeated player with more than his life left
+            {
+                AddReward(0.5f);
+            }
+
+            EndEpisode();
+        }
+    }
+
     public override void CollectObservations(VectorSensor sensor)
     {
-        //sensor.AddObservation(Vector3.Distance(transform.position, player.transform.position)); // Distance to player
+        // 4 floats for observations
+
+        sensor.AddObservation(close_strategy_chosen);
+        sensor.AddObservation(long_strategy_chosen);
         sensor.AddObservation(boss_behaviors.life / 100f); // Boss HP (normalized)
         sensor.AddObservation(player.GetComponentInParent<Player_Behavior>().life / 100f); // Player HP (normalized)
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        if(!start_agent || boss_behaviors.life <= 0)
+        if (!start_agent || boss_behaviors.life <= 0)
         {
             return;
         }
@@ -83,7 +133,19 @@ public class Agnes_AI : Agent
         // One discrete action with 5 branches:
         // 0:walk, 1:teleport_closer, 2:teleport_further, 3:close_attack, 4:long_ranged_attack
 
-        if(walking_to_player)
+        if (count_close_attacks >= count_long_attacks * 3)
+        {
+            close_strategy_chosen = true;
+            long_strategy_chosen = false;
+        }
+
+        if (count_long_attacks >= count_close_attacks * 3)
+        {
+            long_strategy_chosen = true;
+            close_strategy_chosen = false;
+        }
+
+        if (walking_to_player)
         {
             //for training
             //boss_behaviors.walk_towards_player();
@@ -94,16 +156,7 @@ public class Agnes_AI : Agent
             //    AddReward(-0.1f);
             //}
 
-            //if (boss_behaviors.life <= 0)
-            //{
-            //    AddReward(-1.0f);
-            //    EndEpisode(); // Boss "dies"
-            //}
-            //if (player.GetComponentInParent<Player_Behavior>().life <= 0)
-            //{
-            //    AddReward(1.0f); // Boss wins
-            //    EndEpisode();
-            //}
+            //HandleEpisodeEnd();
 
             ////update the lives for the next action
             //last_boss_life = current_boss_life;
@@ -118,19 +171,10 @@ public class Agnes_AI : Agent
 
             //if (current_boss_life < last_boss_life)
             //{
-            //    AddReward(-0.1f);
+            //    AddReward(-0.05f);
             //}
 
-            //if (boss_behaviors.life <= 0)
-            //{
-            //    AddReward(-1.0f);
-            //    EndEpisode(); // Boss "dies"
-            //}
-            //if (player.GetComponentInParent<Player_Behavior>().life <= 0)
-            //{
-            //    AddReward(1.0f); // Boss wins
-            //    EndEpisode();
-            //}
+            //HandleEpisodeEnd();
 
             ////update the lives for the next action
             //last_boss_life = current_boss_life;
@@ -144,26 +188,17 @@ public class Agnes_AI : Agent
             //current_boss_life = boss_behaviors.life;
             //current_player_life = player.GetComponentInParent<Player_Behavior>().life;
 
-            //if (current_boss_life < last_boss_life)
+            //if (current_boss_life < last_boss_life) // losing life while attacking
             //{
-            //    AddReward(-0.2f);
+            //    AddReward(-0.05f);
             //}
 
-            //if (current_player_life < last_player_life)
+            //if (current_player_life < last_player_life) // the hit was successful 
             //{
             //    AddReward(0.5f);
             //}
 
-            //if (boss_behaviors.life <= 0)
-            //{
-            //    AddReward(-1.0f);
-            //    EndEpisode(); // Boss "dies"
-            //}
-            //if (player.GetComponentInParent<Player_Behavior>().life <= 0)
-            //{
-            //    AddReward(1.0f); // Boss wins
-            //    EndEpisode();
-            //}
+            //HandleEpisodeEnd();
 
             ////update the lives for the next action
             //last_player_life = current_player_life;
@@ -174,36 +209,140 @@ public class Agnes_AI : Agent
 
         int action = actionBuffers.DiscreteActions[0];
 
+        //Debug.Log("Action: "+ action);
+
         switch (action)
         {
             case 0: // WALK
+                //idle_actions_taken++;
+                //if (idle_actions_taken > 3)
+                //{
+                //    AddReward(-0.05f);
+                //}
+
+                //if (Vector3.Distance(transform.position, player.transform.position) <= 2f) //penalize if walking when already close to the player
+                //{
+                //    AddReward(-0.3f);
+                //}
+
+                //if (long_strategy_chosen)
+                //{
+                //    AddReward(0.1f);
+                //}
+
+                //if (close_strategy_chosen)
+                //{
+                //    AddReward(-0.2f);
+                //}
+
+                //how_many_times_teleporting = 0;
+
                 walking_to_player = true;
+
                 break;
             case 1: // TELEPORT_CLOSER
+                //idle_actions_taken++;
+                //if (idle_actions_taken > 3)
+                //{
+                //    AddReward(-0.05f);
+                //}
+
+                //how_many_times_teleporting++;
+                //if (how_many_times_teleporting > 3)
+                //{
+                //    AddReward(-0.2f);
+                //}
                 StartCoroutine(boss_behaviors.teleporting(true));
+
+                //if (long_strategy_chosen)
+                //{
+                //    AddReward(0.1f);
+                //}
+
+                //if (close_strategy_chosen)
+                //{
+                //    AddReward(-0.2f);
+                //}
+
                 break;
             case 2: // TELEPORT_FURTHER
+                //idle_actions_taken++;
+                //if (idle_actions_taken > 3)
+                //{
+                //    AddReward(-0.05f);
+                //}
+
+                //how_many_times_teleporting++;
+                //if (how_many_times_teleporting > 3)
+                //{
+                //    AddReward(-0.2f);
+                //}
                 StartCoroutine(boss_behaviors.teleporting(false));
+
+                //if (long_strategy_chosen)
+                //{
+                //    AddReward(-0.2f);
+                //}
+
+                //if (close_strategy_chosen)
+                //{
+                //    AddReward(0.1f);
+                //}
+
                 break;
             case 3: // CLOSE_ATTACK
+                //idle_actions_taken = 0;
+                //how_many_times_teleporting = 0;
+
+                //if (long_strategy_chosen)
+                //{
+                //    AddReward(0.1f);
+                //}
+
+                //if (close_strategy_chosen)
+                //{
+                //    AddReward(-0.2f);
+                //}
+                //if (Vector3.Distance(transform.position, player.transform.position) > 2f) //penalize if attacking when not close to the player
+                //{
+                //    AddReward(-0.2f);
+                //} else
+                //{
+                //    AddReward(0.3f);
+                //}
+
                 StartCoroutine(boss_behaviors.close_range_attack());
+                //AddReward(0.05f); //encourage attacking
                 break;
             case 4: // LONGRANGEDATTACK
+                //idle_actions_taken = 0;
+                //how_many_times_teleporting = 0;
+
+                //if (long_strategy_chosen)
+                //{
+                //    AddReward(-0.2f);
+                //}
+
+                //if (close_strategy_chosen)
+                //{
+                //    AddReward(0.1f);
+                //}
+                //if (Vector3.Distance(transform.position, player.transform.position) < 7f) //penalize if attacking when not at a distance to the player
+                //{
+                //    AddReward(-0.2f);
+                //}
+                //else
+                //{
+                //    AddReward(0.3f);
+                //}
+
                 StartCoroutine(boss_behaviors.long_range_attack());
+                //AddReward(0.05f); //encourage attacking
                 break;
         }
 
         //for training
-        //if (boss_behaviors.life <= 0)
-        //{
-        //    AddReward(-1.0f);
-        //    EndEpisode(); // Boss "dies"
-        //}
-        //if (player.GetComponentInParent<Player_Behavior>().life <= 0)
-        //{
-        //    AddReward(1.0f); // Boss wins
-        //    EndEpisode();
-        //}
+        //HandleEpisodeEnd();
 
         ////update the lives for the next action
         //last_player_life = player.GetComponentInParent<Player_Behavior>().life;

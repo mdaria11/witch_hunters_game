@@ -10,6 +10,8 @@ public class Player_Dummy_behavior : MonoBehaviour
     Vector3 initial_position;
     bool first_walking_save;
 
+    bool wait_for_attack_cooldown;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +20,7 @@ public class Player_Dummy_behavior : MonoBehaviour
         long_attacking = false;
         walking = false;
         first_walking_save = true;
+        wait_for_attack_cooldown = false;
     }
 
     void walk_to_agnes()
@@ -51,6 +54,22 @@ public class Player_Dummy_behavior : MonoBehaviour
             walking = false;
             first_walking_save = true;
         }
+    }
+
+    IEnumerator long_attack()
+    {
+        player_behavior.long_range_attack();
+        yield return new WaitForSeconds(1.5f);
+        long_attacking = false;
+        wait_for_attack_cooldown = false;
+    }
+
+    IEnumerator close_attack()
+    {
+        player_behavior.close_range_attack();
+        yield return new WaitForSeconds(1.5f);
+        close_attacking = false;
+        wait_for_attack_cooldown = false;
     }
 
     // Update is called once per frame
@@ -90,18 +109,18 @@ public class Player_Dummy_behavior : MonoBehaviour
             }
         }
 
-        if(close_attacking && !walking)
+        if(close_attacking && !walking && !wait_for_attack_cooldown)
         {
-            player_behavior.close_range_attack();
-            close_attacking=false;
+            wait_for_attack_cooldown = true;
+            StartCoroutine(close_attack());
         }
 
-        if (long_attacking && !walking)
+        if (long_attacking && !walking && !wait_for_attack_cooldown)
         {
             player_behavior.player_mesh.transform.LookAt(player_behavior.agnes.transform, Vector3.up);
             player_behavior.player_mesh.transform.eulerAngles = new Vector3(0, player_behavior.player_mesh.transform.eulerAngles.y, player_behavior.player_mesh.transform.eulerAngles.z);
-            player_behavior.long_range_attack();
-            long_attacking = false;
+            wait_for_attack_cooldown = true;
+            StartCoroutine(long_attack());
         }
 
         if (walking && close_attacking)

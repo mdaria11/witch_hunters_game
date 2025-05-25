@@ -2,58 +2,58 @@
     "BossAgent": {
         "checkpoints": [
             {
-                "steps": 299947,
-                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-299947.onnx",
-                "reward": -2.6785714823220457,
-                "creation_time": 1746206597.7655165,
+                "steps": 1349975,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-1349975.onnx",
+                "reward": 2.5333333847423396,
+                "creation_time": 1748178470.164296,
                 "auxillary_file_paths": [
-                    "results\\BossTraining\\BossAgent\\BossAgent-299947.pt"
+                    "results\\BossTraining\\BossAgent\\BossAgent-1349975.pt"
                 ]
             },
             {
-                "steps": 349994,
-                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-349994.onnx",
-                "reward": -3.1000000635782876,
-                "creation_time": 1746206780.0141888,
+                "steps": 1399978,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-1399978.onnx",
+                "reward": 1.950000125914812,
+                "creation_time": 1748178652.5070913,
                 "auxillary_file_paths": [
-                    "results\\BossTraining\\BossAgent\\BossAgent-349994.pt"
+                    "results\\BossTraining\\BossAgent\\BossAgent-1399978.pt"
                 ]
             },
             {
-                "steps": 399976,
-                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-399976.onnx",
-                "reward": -3.2153846959655104,
-                "creation_time": 1746206954.7049358,
+                "steps": 1449962,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-1449962.onnx",
+                "reward": 1.8500000319133203,
+                "creation_time": 1748178827.4829323,
                 "auxillary_file_paths": [
-                    "results\\BossTraining\\BossAgent\\BossAgent-399976.pt"
+                    "results\\BossTraining\\BossAgent\\BossAgent-1449962.pt"
                 ]
             },
             {
-                "steps": 449955,
-                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-449955.onnx",
-                "reward": -3.620000088214874,
-                "creation_time": 1746207136.3692155,
+                "steps": 1499954,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-1499954.onnx",
+                "reward": 1.6812500744126737,
+                "creation_time": 1748179004.0782342,
                 "auxillary_file_paths": [
-                    "results\\BossTraining\\BossAgent\\BossAgent-449955.pt"
+                    "results\\BossTraining\\BossAgent\\BossAgent-1499954.pt"
                 ]
             },
             {
-                "steps": 455728,
-                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-455728.onnx",
-                "reward": -3.622222315106127,
-                "creation_time": 1746207155.6688285,
+                "steps": 1514778,
+                "file_path": "results\\BossTraining\\BossAgent\\BossAgent-1514778.onnx",
+                "reward": 2.4142858082694665,
+                "creation_time": 1748179060.3800635,
                 "auxillary_file_paths": [
-                    "results\\BossTraining\\BossAgent\\BossAgent-455728.pt"
+                    "results\\BossTraining\\BossAgent\\BossAgent-1514778.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 455728,
+            "steps": 1514778,
             "file_path": "results\\BossTraining\\BossAgent.onnx",
-            "reward": -3.622222315106127,
-            "creation_time": 1746207155.6688285,
+            "reward": 2.4142858082694665,
+            "creation_time": 1748179060.3800635,
             "auxillary_file_paths": [
-                "results\\BossTraining\\BossAgent\\BossAgent-455728.pt"
+                "results\\BossTraining\\BossAgent\\BossAgent-1514778.pt"
             ]
         }
     },

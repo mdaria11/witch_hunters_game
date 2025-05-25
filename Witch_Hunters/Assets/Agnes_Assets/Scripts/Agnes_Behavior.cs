@@ -50,6 +50,12 @@ public class Agnes_Behavior : MonoBehaviour
             agnes_animator.SetInteger("state", IDLE_STATE);
             agnes_agent.walking_to_player = false;
         }
+
+        //for training
+        //if (life <= 0 || player.GetComponentInParent<Player_Behavior>().life <= 0)
+        //{
+        //    agnes_agent.HandleEpisodeEnd();
+        //}
     }
 
     public IEnumerator teleporting(bool closer_to_player)
@@ -76,8 +82,13 @@ public class Agnes_Behavior : MonoBehaviour
         }
         agnes_rigidbody.MovePosition(transform.position + distance * move_direction);
 
-        yield return new WaitForSeconds(1f); // wait a second after teleporting before continuing
         agnes_agent.busy_teleporting = false;
+
+        //for training
+        //if (life <= 0 || player.GetComponentInParent<Player_Behavior>().life <= 0)
+        //{
+        //    agnes_agent.HandleEpisodeEnd();
+        //}
     }
 
     public IEnumerator close_range_attack()
@@ -102,6 +113,12 @@ public class Agnes_Behavior : MonoBehaviour
 
         yield return new WaitForSeconds(1f); // wait a second after attacking before continuing
         agnes_agent.busy_attacking = false;
+
+        //for training
+        //if (life <= 0 || player.GetComponentInParent<Player_Behavior>().life <= 0)
+        //{
+        //    agnes_agent.HandleEpisodeEnd();
+        //}
     }
 
     public IEnumerator long_range_attack()
@@ -109,7 +126,6 @@ public class Agnes_Behavior : MonoBehaviour
         agnes_agent.busy_attacking = true;
 
         //rotate it so its looking straight ahead at the player
-        //TODO: keep looking at the player til the projectile is released
         transform.LookAt(player.transform, Vector3.up);
         transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z);
 
@@ -128,6 +144,12 @@ public class Agnes_Behavior : MonoBehaviour
 
         yield return new WaitForSeconds(1f); // wait a second after attacking before continuing
         agnes_agent.busy_attacking = false;
+
+        //for training
+        //if (life <= 0 || player.GetComponentInParent<Player_Behavior>().life <= 0)
+        //{
+        //    agnes_agent.HandleEpisodeEnd();
+        //}
     }
 
     // Update is called once per frame
@@ -137,11 +159,12 @@ public class Agnes_Behavior : MonoBehaviour
         {
             is_dead = true;
             agnes_animator.SetTrigger("death");
+            //agnes_agent.HandleEpisodeEnd();
         }
 
 
         //for ingame
-        if(agnes_agent.walking_to_player)
+        if (agnes_agent.walking_to_player)
         {
             walk_towards_player();
         }
