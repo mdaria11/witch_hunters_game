@@ -13,7 +13,7 @@ public class Player_Movement : MonoBehaviour
     Vector3 moveDirection;
     float input_mouseX;
     float input_mouseY;
-    float camera_speed = 600f;
+    float camera_speed = 1200f;
     Vector3 camera_player_vector;
 
     Vector3 player_centerpoint;
@@ -156,7 +156,7 @@ public class Player_Movement : MonoBehaviour
             if ((camera_player_distance >= 1.5f && Input.GetAxis("Mouse ScrollWheel") > 0f) || (camera_player_distance <= 5f && Input.GetAxis("Mouse ScrollWheel") < 0f))
             {
                 camera_player_vector = Vector3.Normalize(player_centerpoint - Camera.main.transform.position);
-                Camera.main.transform.position += camera_player_vector * Input.GetAxis("Mouse ScrollWheel") * (camera_speed * 2.0f) * Time.deltaTime;
+                Camera.main.transform.position += camera_player_vector * Input.GetAxis("Mouse ScrollWheel") * camera_speed * Time.deltaTime;
             }
         }
 
