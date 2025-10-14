@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
@@ -13,6 +14,9 @@ public class Player_Movement : MonoBehaviour
     float input_mouseX;
     float input_mouseY;
     float camera_speed = 600f;
+    Vector3 camera_player_vector;
+
+    Vector3 player_centerpoint;
 
     float walk_speed;
 
@@ -34,6 +38,8 @@ public class Player_Movement : MonoBehaviour
     {
         walk_speed = 4.0f;
         moveDirection = new Vector3(0, 0, 0.1f);
+        player_centerpoint = new Vector3(player_mesh.transform.position.x, player_mesh.transform.position.y + 1.13f, player_mesh.transform.position.z);
+        camera_player_vector = Vector3.Normalize(player_centerpoint - Camera.main.transform.position);
 
         is_running = false;
         is_dead = false;
@@ -129,8 +135,8 @@ public class Player_Movement : MonoBehaviour
         input_mouseX = Input.GetAxis("Mouse X");
         input_mouseY = Input.GetAxis("Mouse Y");
 
-        //ROTATION
-        Vector3 player_centerpoint = new Vector3(player_mesh.transform.position.x, player_mesh.transform.position.y + 1.13f, player_mesh.transform.position.z);
+        ////////// CAMERA ROTATION AND ZOOM /////////////////////////
+        player_centerpoint = new Vector3(player_mesh.transform.position.x, player_mesh.transform.position.y + 1.13f, player_mesh.transform.position.z);
         if (walk_speed == 0.0f)
         {
             Camera.main.transform.RotateAround(player_centerpoint, player_mesh.transform.up, input_mouseX * camera_speed * Time.deltaTime);
@@ -144,7 +150,17 @@ public class Player_Movement : MonoBehaviour
         float camera_x_rotation = (-1) * input_mouseY * camera_speed * Time.deltaTime;
         Camera.main.transform.RotateAround(player_centerpoint, Camera.main.transform.right, camera_x_rotation);
 
-        //ACTIONS
+        if (Input.GetAxis("Mouse ScrollWheel") != 0f)
+        {
+            float camera_player_distance = Vector3.Distance(player_centerpoint, Camera.main.transform.position);
+            if ((camera_player_distance >= 1.5f && Input.GetAxis("Mouse ScrollWheel") > 0f) || (camera_player_distance <= 5f && Input.GetAxis("Mouse ScrollWheel") < 0f))
+            {
+                camera_player_vector = Vector3.Normalize(player_centerpoint - Camera.main.transform.position);
+                Camera.main.transform.position += camera_player_vector * Input.GetAxis("Mouse ScrollWheel") * (camera_speed * 2.0f) * Time.deltaTime;
+            }
+        }
+
+        ////////// ACTIONS //////////////////////////////////////////
 
         //Running
         if (Input.GetKeyDown(KeyCode.LeftShift))
