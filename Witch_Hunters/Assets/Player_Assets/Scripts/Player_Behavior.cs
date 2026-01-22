@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Player_Behavior : MonoBehaviour
 {
     [SerializeField] public GameObject agnes;
+
     public GameObject player_mesh;
     public Slider life_slider;
 
     Animator player_animator;
+    Player_Movement player_movement;
 
     public int life;
     RaycastHit hit;
@@ -21,8 +24,9 @@ public class Player_Behavior : MonoBehaviour
     {
         life = 100;
         life_slider.value = life;
-        player_animator = GetComponent<Player_Movement>().player_animator;
-        player_mesh = GetComponent<Player_Movement>().player_mesh;
+        player_movement = GetComponent<Player_Movement>();
+        player_animator = player_movement.player_animator;
+        player_mesh = player_movement.player_mesh;
         agnes_ai = agnes.GetComponent<Agnes_AI>();
     }
 
@@ -64,6 +68,9 @@ public class Player_Behavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (player_movement.inventory_input_freeze)
+            return;
+
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {
             close_range_attack();

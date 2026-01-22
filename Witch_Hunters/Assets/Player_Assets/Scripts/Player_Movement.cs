@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
 {
+    public bool inventory_input_freeze;
+
     const int IDLE_STATE = 0;
     const int WALK_STATE = 1;
     const int RUN_STATE = 2;
@@ -36,6 +38,8 @@ public class Player_Movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        inventory_input_freeze = false;
+
         walk_speed = 4.0f;
         moveDirection = new Vector3(0, 0, 0.1f);
         player_centerpoint = new Vector3(player_mesh.transform.position.x, player_mesh.transform.position.y + 1.13f, player_mesh.transform.position.z);
@@ -47,6 +51,9 @@ public class Player_Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (inventory_input_freeze)
+            return;
+
         //WASD MOVEMENT
 
         if (!is_dead)
@@ -131,6 +138,9 @@ public class Player_Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (inventory_input_freeze)
+            return;
+
         // get mouse input
         input_mouseX = Input.GetAxis("Mouse X");
         input_mouseY = Input.GetAxis("Mouse Y");
